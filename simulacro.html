@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulacro en curso · Uniputumayo</title>
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<div class="exam-top">
+  <div class="brand" style="display:flex;align-items:center;gap:12px;color:#fff;font-weight:700">
+    <span class="logo" style="width:34px;height:34px;border-radius:8px;background:#fff;color:#0B2A5B;display:grid;place-items:center;font-weight:800">iTP</span>
+    <span>Simulacro Saber Pro / TyT</span>
+  </div>
+  <div class="timer" id="timer"><span class="lbl">Tiempo restante</span><span id="clock">60:00</span></div>
+  <div class="student" style="color:#fff;text-align:right;font-size:14px">
+    <b id="stName">Estudiante</b><span id="stMeta"></span>
+  </div>
+</div>
+
+<div class="container">
+  <div class="exam-wrap">
+    <!-- Navegador -->
+    <aside class="nav-panel">
+      <h3>Navegador de preguntas</h3>
+      <div class="legend">
+        <span><i class="dot cur"></i> Actual</span>
+        <span><i class="dot ok"></i> Respondida</span>
+        <span><i class="dot mark"></i> Marcada para revisión</span>
+        <span><i class="dot off"></i> Sin responder</span>
+      </div>
+      <div class="qgrid" id="qgrid"></div>
+      <hr class="hr">
+      <button class="btn teal block" id="btnEntregar">Entregar y ver resultados</button>
+    </aside>
+
+    <!-- Pregunta -->
+    <section class="q-panel">
+      <div class="q-meta">
+        <div>
+          <div class="q-module" id="qModule">Módulo</div>
+          <div style="color:#6B7280;font-size:13px" id="qCount">Pregunta 1 de 25</div>
+        </div>
+        <button class="btn ghost" id="btnMarcar">🚩 Marcar para revisión</button>
+      </div>
+
+      <div id="qStimulusBox"></div>
+      <div class="q-stem" id="qStem"></div>
+      <div class="options" id="qOptions"></div>
+
+      <div class="q-actions">
+        <button class="btn grey" id="btnPrev">← Anterior</button>
+        <div style="flex:1"></div>
+        <button class="btn" id="btnNext">Siguiente →</button>
+      </div>
+
+      <div class="progress-row">
+        <span>Progreso del examen</span>
+        <span id="progText">0 de 25 respondidas</span>
+      </div>
+      <div class="progress"><i id="progBar"></i></div>
+    </section>
+  </div>
+</div>
+
+<script src="assets/js/preguntas.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+(function(){
+  const sesion = APP.getSesion();
+  if(!sesion || sesion.entregado){ window.location.href="index.html"; return; }
+
+  // Reconstruir lista de preguntas en el orden de la sesión
+  const byId = Object.fromEntries(window.BANCO_PREGUNTAS.map(q=>[q.id,q]));
+  const preguntas = sesion.preguntasIds.map(id=>byId[id]).filter(Boolean);
+  const N = preguntas.length;
+
+  // Cabecera estudiante
+  document.getElementById("stName").textContent = sesion.estudiante.nombre;
+  document.getElementById("stMeta").textContent = sesion.estudiante.programa + " · " + sesion.estudiante.sede;
+
+  const el = id=>document.getElementById(id);
+  const clock=el("clock"), timer=el("timer");
+  const qgrid=el("qgrid");
+
+  // Construir grid
+  for(let i=0;i<N;i++){
+    const b=document.createElement("button");
+    b.className="qbtn"; b.textContent=i+1; b.dataset.i=i;
+    b.addEventListener("click",()=>{ sesion.actual=i; render(); });
+    qgrid.appendChild(b);
+  }
+
+  function estadoBtn(i){
+    const b=qgrid.children[i];
+    b.className="qbtn";
+    const id=preguntas[i].id;
+    if(i===sesion.actual){ b.classList.add("cur"); }
+    else if(sesion.marcadas[id]){ b.classList.add("mark"); }
+    else if(sesion.respuestas[id]!=null){ b.classList.add("ok"); }
+    else { b.classList.add("off"); }
+  }
+  function refreshGrid(){ for(let i=0;i<N;i++) estadoBtn(i); }
+
+  function render(){
+    const i=sesion.actual, q=preguntas[i], id=q.id;
+    el("qModule").textContent = q.modulo;
+    el("qCount").textContent = "Pregunta "+(i+1)+" de "+N;
+    el("qStimulusBox").innerHTML = q.estimulo ? '<div class="stimulus">'+APP.escape(q.estimulo)+'</div>' : "";
+    el("qStem").textContent = q.enunciado;
+    // opciones
+    const cont=el("qOptions"); cont.innerHTML="";
+    const letras=["A","B","C","D"];
+    q.opciones.forEach((op,idx)=>{
+      const sel = sesion.respuestas[id]===idx;
+      const d=document.createElement("label");
+      d.className="opt"+(sel?" sel":"");
+      d.innerHTML='<span class="k">'+letras[idx]+'</span><span>'+APP.escape(op)+'</span>';
+      d.addEventListener("click",()=>{ sesion.respuestas[id]=idx; APP.setSesion(sesion); render(); });
+      cont.appendChild(d);
+    });
+    // botón marcar
+    el("btnMarcar").innerHTML = sesion.marcadas[id] ? "🚩 Quitar marca" : "🚩 Marcar para revisión";
+    el("btnMarcar").classList.toggle("teal", !!sesion.marcadas[id]);
+    // nav
+    el("btnPrev").disabled = (i===0);
+    el("btnNext").textContent = (i===N-1) ? "Ir a entrega ✓" : "Siguiente →";
+    // progreso
+    const resp=Object.keys(sesion.respuestas).length;
+    el("progText").textContent = resp+" de "+N+" respondidas";
+    el("progBar").style.width = Math.round(resp/N*100)+"%";
+    refreshGrid();
+    APP.setSesion(sesion);
+  }
+
+  el("btnMarcar").addEventListener("click",()=>{ const id=preguntas[sesion.actual].id; sesion.marcadas[id]=!sesion.marcadas[id]; render(); });
+  el("btnPrev").addEventListener("click",()=>{ if(sesion.actual>0){ sesion.actual--; render(); } });
+  el("btnNext").addEventListener("click",()=>{ if(sesion.actual<N-1){ sesion.actual++; render(); } else { entregar(false); } });
+  el("btnEntregar").addEventListener("click",()=>{ const r=Object.keys(sesion.respuestas).length; if(confirm("¿Entregar el simulacro?\n\nRespondidas: "+r+" de "+N+".\nEsta acción finaliza la prueba.")) entregar(false); });
+
+  // ---- Cronómetro ----
+  let timerInt=null;
+  function tick(){
+    const restante=Math.round((sesion.finTs-Date.now())/1000);
+    clock.textContent=APP.fmtTime(restante);
+    timer.classList.toggle("warn", restante<=300 && restante>60);
+    timer.classList.toggle("danger", restante<=60);
+    if(restante<=0){ clearInterval(timerInt); entregar(true); }
+  }
+  timerInt=setInterval(tick,1000); tick();
+
+  // ---- Calificación y entrega ----
+  function entregar(porTiempo){
+    if(sesion.entregado) return;
+    clearInterval(timerInt);
+    sesion.entregado=true; sesion.finReal=Date.now(); sesion.porTiempo=!!porTiempo;
+
+    // Calcular resultados
+    const letras=["A","B","C","D"];
+    let correctas=0; const porModulo={}; const detalle=[];
+    preguntas.forEach(q=>{
+      const marc=sesion.respuestas[q.id];
+      const ok = marc===q.correcta;
+      if(ok) correctas++;
+      if(!porModulo[q.modulo]) porModulo[q.modulo]={total:0,ok:0};
+      porModulo[q.modulo].total++; if(ok) porModulo[q.modulo].ok++;
+      detalle.push({ id:q.id, modulo:q.modulo, competencia:q.competencia, dificultad:q.dificultad,
+        enunciado:q.enunciado, estimulo:q.estimulo||"", opciones:q.opciones,
+        marcada:(marc==null?null:letras[marc]), correcta:letras[q.correcta], ok, explicacion:q.explicacion });
+    });
+    const global = Math.round(correctas/N*1000)/10; // % con 1 decimal
+    const dur = Math.round((sesion.finReal-sesion.inicio)/1000);
+
+    const resultado = {
+      id: sesion.id, fecha: new Date().toISOString(),
+      estudiante: sesion.estudiante,
+      totalPreguntas:N, correctas, global,
+      porModulo, detalle, duracionSeg:dur, porTiempo:!!porTiempo
+    };
+    APP.addResultado(resultado);
+    localStorage.setItem("sp_ultimo_resultado", JSON.stringify(resultado));
+    APP.clearSesion();
+    window.location.href="resultados.html";
+  }
+
+  // Evitar perder el examen por recarga accidental
+  window.addEventListener("beforeunload",function(e){ if(!sesion.entregado){ e.preventDefault(); e.returnValue=""; } });
+
+  render();
+})();
+</script>
+</body>
+</html>

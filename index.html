@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulacro Saber Pro / Saber TyT · Uniputumayo</title>
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="brand"><span class="logo">iTP</span><span>Uniputumayo · Simulacros Saber Pro / TyT</span></div>
+  <div class="nav"><a href="index.html">Inicio</a><a href="dashboard.html">Dashboard institucional</a></div>
+</div>
+
+<div class="container-narrow">
+  <div class="hero mt16">
+    <div class="kicker">Preparación institucional</div>
+    <h1>Registro para el simulacro</h1>
+    <p>Prueba tipo Saber Pro / Saber TyT · Duración <b>60 minutos</b> · Módulos genéricos con preguntas aleatorias. Diligencia tus datos para iniciar.</p>
+  </div>
+
+  <form id="form" class="card mt16" novalidate>
+    <div class="field" id="f_nombre">
+      <label class="req" for="nombre">Nombre completo</label>
+      <input id="nombre" name="nombre" type="text" placeholder="Ingresa tu nombre completo" autocomplete="off">
+      <div class="err">Ingresa tu nombre completo (solo letras).</div>
+    </div>
+
+    <div class="field" id="f_doc">
+      <label class="req" for="documento">Documento de identidad</label>
+      <input id="documento" name="documento" type="text" inputmode="numeric" placeholder="Ingresa tu número de documento" autocomplete="off">
+      <div class="err">Ingresa un documento válido (solo números, 5–15 dígitos).</div>
+    </div>
+
+    <div class="field" id="f_prog">
+      <label class="req" for="programa">Programa académico</label>
+      <select id="programa" name="programa"><option value="">Selecciona tu programa académico</option></select>
+      <div class="err">Selecciona un programa.</div>
+    </div>
+
+    <div class="field" id="f_sede">
+      <label class="req" for="sede">Sede</label>
+      <select id="sede" name="sede"><option value="">Selecciona tu sede</option></select>
+      <div class="hint">Mocoa · Sibundoy · Valle del Guamuez · Puerto Asís · Otras</div>
+      <div class="err">Selecciona una sede.</div>
+    </div>
+
+    <div class="grid-3">
+      <div class="field" id="f_edad">
+        <label class="req" for="edad">Edad</label>
+        <select id="edad" name="edad"><option value="">Selecciona</option></select>
+        <div class="err">Selecciona un rango.</div>
+      </div>
+      <div>
+        <label for="genero">Género <span class="hint">(opcional)</span></label>
+        <select id="genero" name="genero"><option value="">Selecciona</option></select>
+      </div>
+      <div>
+        <label for="jornada">Jornada <span class="hint">(opcional)</span></label>
+        <select id="jornada" name="jornada"><option value="">Selecciona</option></select>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <label for="semestre">Semestre <span class="hint">(opcional)</span></label>
+        <select id="semestre" name="semestre"><option value="">Selecciona</option></select>
+      </div>
+      <div>
+        <label for="modalidad">Modalidad <span class="hint">(opcional)</span></label>
+        <select id="modalidad" name="modalidad"><option value="">Selecciona</option></select>
+      </div>
+    </div>
+
+    <div class="pill-note mt16">🔒 Tratamiento de datos: al iniciar, aceptas el uso académico de tus datos conforme a la Ley 1581 de 2012 (Habeas Data). La información se almacena localmente en este navegador para fines del simulacro.</div>
+
+    <div class="btn-row mt16">
+      <button type="submit" class="btn lg block">▶ Iniciar simulacro (60 min)</button>
+    </div>
+  </form>
+
+  <div class="footer">Institución Universitaria del Putumayo · Sistema de Fortalecimiento Saber Pro / Saber TyT</div>
+</div>
+
+<script src="assets/js/preguntas.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+(function(){
+  const C = window.CATALOGOS;
+  const fill=(id,arr)=>{ const s=document.getElementById(id); arr.forEach(v=>{ const o=document.createElement("option"); o.value=v; o.textContent=v; s.appendChild(o); }); };
+  fill("programa",C.programas); fill("sede",C.sedes); fill("edad",C.edades);
+  fill("genero",C.generos); fill("jornada",C.jornadas); fill("semestre",C.semestres); fill("modalidad",C.modalidades);
+
+  const form=document.getElementById("form");
+  const nombre=document.getElementById("nombre"), doc=document.getElementById("documento");
+  // Documento: solo números
+  doc.addEventListener("input",()=>{ doc.value=doc.value.replace(/\D/g,"").slice(0,15); });
+  // Nombre: solo letras y espacios
+  nombre.addEventListener("input",()=>{ nombre.value=nombre.value.replace(/[^\p{L}\s'.-]/gu,""); });
+
+  function invalid(id,cond){ const f=document.getElementById(id); f.classList.toggle("invalid",cond); return cond; }
+
+  form.addEventListener("submit",function(e){
+    e.preventDefault();
+    let bad=false;
+    bad = invalid("f_nombre", nombre.value.trim().length<3) || bad;
+    bad = invalid("f_doc", !/^\d{5,15}$/.test(doc.value.trim())) || bad;
+    bad = invalid("f_prog", !document.getElementById("programa").value) || bad;
+    bad = invalid("f_sede", !document.getElementById("sede").value) || bad;
+    bad = invalid("f_edad", !document.getElementById("edad").value) || bad;
+    if(bad){ document.querySelector(".invalid")?.scrollIntoView({behavior:"smooth",block:"center"}); return; }
+
+    const estudiante = {
+      nombre:nombre.value.trim(), documento:doc.value.trim(),
+      programa:document.getElementById("programa").value, sede:document.getElementById("sede").value,
+      edad:document.getElementById("edad").value, genero:document.getElementById("genero").value,
+      jornada:document.getElementById("jornada").value, semestre:document.getElementById("semestre").value,
+      modalidad:document.getElementById("modalidad").value
+    };
+    const preguntas = APP.seleccionarPreguntas(APP.NUM_PREGUNTAS);
+    const sesion = {
+      id: APP.uid(), estudiante,
+      preguntasIds: preguntas.map(q=>q.id),
+      respuestas: {}, marcadas: {},
+      inicio: Date.now(),
+      finTs: Date.now() + APP.DURACION_MIN*60*1000,
+      actual: 0, entregado:false
+    };
+    APP.setSesion(sesion);
+    window.location.href="simulacro.html";
+  });
+})();
+</script>
+</body>
+</html>

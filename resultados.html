@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resultados del simulacro · Uniputumayo</title>
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="brand"><span class="logo">iTP</span><span>Uniputumayo · Resultados del simulacro</span></div>
+  <div class="nav"><a href="index.html">Nuevo simulacro</a><a href="dashboard.html">Dashboard institucional</a></div>
+</div>
+
+<div class="container">
+  <div class="card result-hero">
+    <div id="alertTiempo"></div>
+    <div class="kicker">Resultado del estudiante</div>
+    <h1 style="color:#0B2A5B;margin:.2em 0" id="hName">—</h1>
+    <p style="color:#6B7280" id="hMeta">—</p>
+    <div class="score-ring" id="ring">
+      <div class="inner"><div><div class="val" id="scoreVal">0%</div><div class="lbl">Puntaje global</div></div></div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="n" id="kCorr">0</div><div class="t">Respuestas correctas</div></div>
+      <div class="kpi"><div class="n" id="kTot">0</div><div class="t">Preguntas totales</div></div>
+      <div class="kpi"><div class="n" id="kNivel">—</div><div class="t">Nivel de desempeño</div></div>
+      <div class="kpi"><div class="n" id="kTime">0:00</div><div class="t">Tiempo empleado</div></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Puntaje por módulo</h2>
+    <div id="modBars"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Recomendaciones de mejora</h2>
+    <ul class="list-reco" id="reco"></ul>
+  </div>
+
+  <div class="panel">
+    <h2>Revisión de respuestas</h2>
+    <div style="margin-bottom:10px">
+      <button class="btn ghost" id="btnToggle">Mostrar/ocultar detalle</button>
+    </div>
+    <div id="review" style="display:none"></div>
+  </div>
+
+  <div class="btn-row" style="margin:18px 0">
+    <a class="btn" href="index.html">▶ Realizar otro simulacro</a>
+    <a class="btn teal" href="dashboard.html">📊 Ver dashboard institucional</a>
+    <button class="btn grey" id="btnPrint">🖨️ Imprimir / Guardar PDF</button>
+  </div>
+
+  <div class="footer">Institución Universitaria del Putumayo · Sistema de Fortalecimiento Saber Pro / Saber TyT</div>
+</div>
+
+<script src="assets/js/app.js"></script>
+<script>
+(function(){
+  const r = JSON.parse(localStorage.getItem("sp_ultimo_resultado")||"null");
+  if(!r){ window.location.href="index.html"; return; }
+  const el=id=>document.getElementById(id);
+
+  function nivel(p){ if(p>=80) return ["Avanzado","green"]; if(p>=60) return ["Satisfactorio","teal"]; if(p>=40) return ["Mínimo","amber"]; return ["Inicial","grey"]; }
+
+  el("hName").textContent = r.estudiante.nombre;
+  el("hMeta").textContent = r.estudiante.programa + " · Sede " + r.estudiante.sede + " · " + new Date(r.fecha).toLocaleString("es-CO");
+  el("scoreVal").textContent = r.global + "%";
+  el("ring").style.setProperty("--pct", r.global + "%");
+  el("kCorr").textContent = r.correctas;
+  el("kTot").textContent = r.totalPreguntas;
+  const nv=nivel(r.global); el("kNivel").textContent = nv[0]; el("kNivel").style.color = getComputedStyle(document.documentElement).getPropertyValue("--"+(nv[1]==="grey"?"grey":nv[1]));
+  el("kTime").textContent = APP.fmtTime(r.duracionSeg);
+
+  if(r.porTiempo){ el("alertTiempo").innerHTML='<div class="pill-note" style="border-left:5px solid var(--amber);margin-bottom:10px">⏰ El tiempo se agotó: la prueba fue entregada automáticamente.</div>'; }
+
+  // Barras por módulo
+  const orden=["Lectura Crítica","Razonamiento Cuantitativo","Competencias Ciudadanas","Comunicación Escrita","Inglés"];
+  const mods=Object.keys(r.porModulo).sort((a,b)=>orden.indexOf(a)-orden.indexOf(b));
+  const cont=el("modBars");
+  mods.forEach(m=>{
+    const o=r.porModulo[m]; const pc=Math.round(o.ok/o.total*100);
+    const div=document.createElement("div"); div.className="bar-row";
+    div.innerHTML='<div class="name">'+APP.escape(m)+'</div><div class="bar"><i style="width:'+pc+'%"></i></div><div class="pc">'+pc+'%</div>';
+    cont.appendChild(div);
+  });
+
+  // Recomendaciones (según módulos más débiles)
+  const ranking=mods.map(m=>({m,pc:r.porModulo[m].ok/r.porModulo[m].total})).sort((a,b)=>a.pc-b.pc);
+  const reco=el("reco");
+  const consejos={
+    "Razonamiento Cuantitativo":"Refuerza proporciones, porcentajes sucesivos, lectura de gráficos y modelación. Practica estimando antes de calcular.",
+    "Lectura Crítica":"Trabaja identificación de tesis, inferencia y función de conectores. Lee la pregunta antes del texto para ganar tiempo.",
+    "Competencias Ciudadanas":"Repasa Constitución, mecanismos de protección (tutela, acción popular) y valoración de argumentos.",
+    "Comunicación Escrita":"Practica planeación (tesis clara), cohesión con conectores y corrección de redundancias.",
+    "Inglés":"Refuerza present simple, condicionales, voz pasiva, 'since/for' y comprensión de idea principal e inferencia."
+  };
+  ranking.slice(0,3).forEach(x=>{
+    const pc=Math.round(x.pc*100);
+    const li=document.createElement("li");
+    li.innerHTML="<b>"+APP.escape(x.m)+" ("+pc+"%):</b> "+APP.escape(consejos[x.m]||"Refuerza los contenidos de este módulo.");
+    reco.appendChild(li);
+  });
+  if(r.global>=80){ const li=document.createElement("li"); li.style.borderLeftColor="var(--green)"; li.innerHTML="🎉 <b>¡Excelente desempeño!</b> Mantén la práctica con simulacros periódicos para consolidar tu nivel."; reco.prepend(li); }
+
+  // Revisión detallada
+  const rev=el("review"); const letras=["A","B","C","D"];
+  r.detalle.forEach((d,i)=>{
+    const item=document.createElement("div");
+    item.className="review-item "+(d.ok?"correct":"wrong");
+    let ops="";
+    d.opciones.forEach((op,idx)=>{
+      const L=letras[idx];
+      let tag="";
+      if(L===d.correcta) tag=' <span class="tag-correct">✓ correcta</span>';
+      if(d.marcada===L && !d.ok) tag+=' <span class="tag-wrong">✗ tu respuesta</span>';
+      ops+='<div style="margin:2px 0"><b>'+L+'.</b> '+APP.escape(op)+tag+'</div>';
+    });
+    const tu = d.marcada? ("Tu respuesta: "+d.marcada) : "Sin responder";
+    item.innerHTML='<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">'
+      +'<b>'+(i+1)+'. '+APP.escape(d.modulo)+'</b>'
+      +'<span class="badge '+(d.ok?"green":"amber")+'">'+(d.ok?"Correcta":"Incorrecta")+'</span></div>'
+      +(d.estimulo?'<div class="stimulus">'+APP.escape(d.estimulo)+'</div>':"")
+      +'<div style="margin:8px 0">'+APP.escape(d.enunciado)+'</div>'
+      +ops
+      +'<div style="margin-top:6px;color:#6B7280;font-size:13px">'+tu+' · '+APP.escape(d.competencia)+' · '+APP.escape(d.dificultad)+'</div>'
+      +'<div style="margin-top:6px;background:#F3F7FB;border-left:4px solid #1F5AA6;border-radius:8px;padding:8px 12px;font-size:14px"><b>Explicación:</b> '+APP.escape(d.explicacion)+'</div>';
+    rev.appendChild(item);
+  });
+
+  el("btnToggle").addEventListener("click",()=>{ rev.style.display = rev.style.display==="none"?"block":"none"; });
+  el("btnPrint").addEventListener("click",()=>window.print());
+})();
+</script>
+</body>
+</html>
