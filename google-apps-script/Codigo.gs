@@ -1,52 +1,28 @@
 /* =====================================================================
    BACKEND GRATUITO — Google Apps Script + Google Sheets
    Plataforma de Simulacros Saber Pro / TyT — UNIPUTUMAYO
-   ---------------------------------------------------------------------
-   Este script recibe los resultados de los simulacros (doPost) y los
-   entrega al dashboard (doGet). Guarda todo en una hoja llamada
-   "Resultados". No requiere pagos.
-
-   👉 Cómo usarlo (resumen; ver la guía completa en el ZIP):
-      1) Crea una Google Sheet nueva.
-      2) Menú Extensiones → Apps Script.
-      3) Borra el contenido y pega TODO este archivo.
-      4) Implementar → Nueva implementación → tipo "Aplicación web".
-         - Ejecutar como: Yo
-         - Quién tiene acceso: Cualquier usuario
-      5) Copia la URL (termina en /exec) y pégala en assets/js/config.js
    ===================================================================== */
-
 var SHEET_NAME = 'Resultados';
-
 var HEADERS = ['id','fecha','nombre','documento','programa','sede','edad',
   'genero','jornada','semestre','modalidad','global','correctas',
   'totalPreguntas','duracionSeg','porTiempo','porModulo_json','detalle_json'];
 
-/* --- Punto de entrada para LEER (dashboard) --- */
 function doGet(e){
   try{
     var action = (e && e.parameter && e.parameter.action) || 'list';
-    if(action === 'list'){
-      return json({ ok:true, results: getAll() });
-    }
+    if(action === 'list'){ return json({ ok:true, results: getAll() }); }
     return json({ ok:true, results: [] });
-  }catch(err){
-    return json({ ok:false, error: String(err) });
-  }
+  }catch(err){ return json({ ok:false, error: String(err) }); }
 }
 
-/* --- Punto de entrada para GUARDAR (simulacro) --- */
 function doPost(e){
   try{
     var r = JSON.parse(e.postData.contents);
     appendResult(r);
     return json({ ok:true });
-  }catch(err){
-    return json({ ok:false, error: String(err) });
-  }
+  }catch(err){ return json({ ok:false, error: String(err) }); }
 }
 
-/* --- Utilidades --- */
 function json(obj){
   return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
@@ -68,24 +44,14 @@ function appendResult(r){
   var sh = getSheet();
   var e = r.estudiante || {};
   sh.appendRow([
-    r.id || '',
-    r.fecha || new Date().toISOString(),
-    e.nombre || '',
-    "'" + (e.documento || ''),         // apóstrofo => se guarda como TEXTO (no pierde ceros)
-    e.programa || '',
-    e.sede || '',
-    e.edad || '',
-    e.genero || '',
-    e.jornada || '',
-    e.semestre || '',
-    e.modalidad || '',
-    Number(r.global || 0),
-    Number(r.correctas || 0),
-    Number(r.totalPreguntas || 0),
-    Number(r.duracionSeg || 0),
+    r.id || '', r.fecha || new Date().toISOString(),
+    e.nombre || '', "'" + (e.documento || ''),
+    e.programa || '', e.sede || '', e.edad || '', e.genero || '',
+    e.jornada || '', e.semestre || '', e.modalidad || '',
+    Number(r.global || 0), Number(r.correctas || 0),
+    Number(r.totalPreguntas || 0), Number(r.duracionSeg || 0),
     r.porTiempo ? 'SI' : 'NO',
-    JSON.stringify(r.porModulo || {}),
-    JSON.stringify(r.detalle || [])
+    JSON.stringify(r.porModulo || {}), JSON.stringify(r.detalle || [])
   ]);
 }
 
@@ -97,31 +63,19 @@ function getAll(){
   for(var i=1; i<values.length; i++){
     var row = values[i];
     out.push({
-      id: row[0],
-      fecha: row[1],
+      id: row[0], fecha: row[1],
       estudiante: {
-        nombre: row[2],
-        documento: String(row[3]).replace(/^'/, ''),
+        nombre: row[2], documento: String(row[3]).replace(/^'/, ''),
         programa: row[4], sede: row[5], edad: row[6], genero: row[7],
         jornada: row[8], semestre: row[9], modalidad: row[10]
       },
-      global: Number(row[11]),
-      correctas: Number(row[12]),
-      totalPreguntas: Number(row[13]),
-      duracionSeg: Number(row[14]),
+      global: Number(row[11]), correctas: Number(row[12]),
+      totalPreguntas: Number(row[13]), duracionSeg: Number(row[14]),
       porTiempo: (row[15] === 'SI'),
-      porModulo: safeParse(row[16], {}),
-      detalle: safeParse(row[17], [])
+      porModulo: safeParse(row[16], {}), detalle: safeParse(row[17], [])
     });
   }
   return out;
 }
 
-function safeParse(s, def){
-  try{ return JSON.parse(s); }catch(e){ return def; }
-}
-
-/* Opcional: ejecuta esta función una vez para crear la hoja/encabezados. */
-function inicializar(){
-  getSheet();
-}
+function safeParse(s, def){ try{ return JSON.parse(s); }catch(e){ return def; } }

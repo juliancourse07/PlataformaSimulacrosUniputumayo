@@ -21,7 +21,7 @@
     <div>
       <div class="kicker">Analítica institucional</div>
       <h1 style="margin:.2em 0;color:#09618F">Tablero de resultados de simulacros</h1>
-      <p style="color:#5B6B78;margin:0">Consolida los simulacros realizados en este navegador.</p>
+      <p style="color:#5B6B78;margin:0">Consolida en tiempo real los simulacros realizados.</p>
     </div>
     <div class="btn-row">
       <button class="btn verde" id="btnRefrescar">🔄 Actualizar</button>
@@ -32,7 +32,7 @@
 
   <div id="content"></div>
 
-  <div class="footer">Institución Universitaria del Putumayo · UNIPUTUMAYO · Datos almacenados localmente (localStorage) · Demo funcional</div>
+  <div class="footer">Institución Universitaria del Putumayo · UNIPUTUMAYO · Sistema de Fortalecimiento Saber Pro / Saber TyT</div>
 </div>
 
 <script src="assets/js/app.js"></script>
@@ -43,7 +43,6 @@
   const el=id=>document.getElementById(id);
   const content = el("content");
 
-  // Indicador de estado + carga de datos (nube o local)
   content.innerHTML = '<div class="panel"><div class="empty">⏳ Cargando resultados'
     + (API.enabled() ? ' desde Google Sheets…' : ' (modo local)…') + '</div></div>';
 
@@ -52,7 +51,7 @@
 
   const fuente = API.enabled()
     ? '<div class="pill-note" style="margin-top:16px;border-left:5px solid var(--verde)">☁️ <b>Datos en la nube (Google Sheets):</b> este tablero muestra los resultados de <b>todos</b> los estudiantes, desde cualquier equipo.</div>'
-    : '<div class="pill-note" style="margin-top:16px;border-left:5px solid var(--sol)">💾 <b>Modo local:</b> se muestran solo los simulacros hechos en este navegador. Para consolidar a todos, configura Google Sheets (ver guía).</div>';
+    : '<div class="pill-note" style="margin-top:16px;border-left:5px solid var(--sol)">💾 <b>Modo local:</b> se muestran solo los simulacros hechos en este navegador.</div>';
 
   if(!data.length){
     content.innerHTML='<div class="panel"><div class="empty">Aún no hay simulacros registrados.<br>Realiza al menos un simulacro para poblar el tablero.</div>'
@@ -66,15 +65,13 @@
   const nivelCount={Avanzado:0,Satisfactorio:0,"Mínimo":0,Inicial:0};
   data.forEach(r=> nivelCount[nivel(r.global)]++);
 
-  const sede={}, prog={};
-  const modAcc={};
+  const sede={}, prog={}, modAcc={};
   data.forEach(r=>{
     (sede[r.estudiante.sede]=sede[r.estudiante.sede]||{n:0,sum:0}); sede[r.estudiante.sede].n++; sede[r.estudiante.sede].sum+=r.global;
     (prog[r.estudiante.programa]=prog[r.estudiante.programa]||{n:0,sum:0}); prog[r.estudiante.programa].n++; prog[r.estudiante.programa].sum+=r.global;
     for(const m in r.porModulo){ const o=r.porModulo[m]; (modAcc[m]=modAcc[m]||{ok:0,total:0}); modAcc[m].ok+=o.ok; modAcc[m].total+=o.total; }
   });
   const modPc={}; for(const m in modAcc){ modPc[m]=Math.round(modAcc[m].ok/modAcc[m].total*100); }
-
   const bestMod = Object.entries(modPc).sort((a,b)=>b[1]-a[1])[0];
   const worstMod = Object.entries(modPc).sort((a,b)=>a[1]-b[1])[0];
 
@@ -115,8 +112,7 @@
     const vals=labels.map(l=> modPc[l]!=null?modPc[l]:0);
     const cx=140,cy=130,R=95, n=labels.length;
     const pt=(i,r)=>{ const a=-Math.PI/2 + i*2*Math.PI/n; return [cx+r*Math.cos(a), cy+r*Math.sin(a)]; };
-    let grid="";
-    [0.25,0.5,0.75,1].forEach(f=>{ let p=""; for(let i=0;i<n;i++){ const [x,y]=pt(i,R*f); p+=(i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)+" "; } grid+=`<path d="${p}Z" fill="none" stroke="#DDE7EF"/>`; });
+    let grid=""; [0.25,0.5,0.75,1].forEach(f=>{ let p=""; for(let i=0;i<n;i++){ const [x,y]=pt(i,R*f); p+=(i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)+" "; } grid+=`<path d="${p}Z" fill="none" stroke="#DDE7EF"/>`; });
     let axes=""; for(let i=0;i<n;i++){ const [x,y]=pt(i,R); axes+=`<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#DDE7EF"/>`; }
     let poly=""; vals.forEach((v,i)=>{ const [x,y]=pt(i,R*v/100); poly+=(i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)+" "; });
     let dots=""; vals.forEach((v,i)=>{ const [x,y]=pt(i,R*v/100); dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.5" fill="#09618F"/>`; });
@@ -125,11 +121,9 @@
   }
 
   function tablaSede(sede,data){
-    let rows="";
-    const orden=["Mocoa","Sibundoy","Valle del Guamuez","Puerto Asís","Otras"];
+    let rows=""; const orden=["Mocoa","Sibundoy","Valle del Guamuez","Puerto Asís","Otras"];
     Object.keys(sede).sort((a,b)=>orden.indexOf(a)-orden.indexOf(b)).forEach(s=>{
-      const o=sede[s]; const prom=Math.round(o.sum/o.n);
-      const pct=Math.round(o.n/data.length*100);
+      const o=sede[s]; const prom=Math.round(o.sum/o.n); const pct=Math.round(o.n/data.length*100);
       rows+=`<tr><td><b>${APP.escape(s)}</b></td><td>${o.n}</td><td>${pct}%</td><td>${prom}%</td><td>${nivel(prom)}</td></tr>`;
     });
     return `<table class="tbl"><thead><tr><th>Sede</th><th>Estudiantes</th><th>Participación</th><th>Promedio</th><th>Nivel</th></tr></thead><tbody>${rows}</tbody></table>`;
@@ -147,8 +141,7 @@
             <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
               <div>${radar(modPc)}</div>
               <div style="flex:1;min-width:200px">${barList(modPc,false)}</div>
-            </div>
-         </div>
+            </div></div>
        </div>`
     + `<div class="panel"><h2>Resumen por sede</h2>${tablaSede(sede,data)}</div>`
     + `<div class="two-col">

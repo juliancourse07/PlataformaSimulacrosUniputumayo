@@ -34,21 +34,11 @@
     </div>
   </div>
 
-  <div class="panel">
-    <h2>Puntaje por módulo</h2>
-    <div id="modBars"></div>
-  </div>
-
-  <div class="panel">
-    <h2>Recomendaciones de mejora</h2>
-    <ul class="list-reco" id="reco"></ul>
-  </div>
-
+  <div class="panel"><h2>Puntaje por módulo</h2><div id="modBars"></div></div>
+  <div class="panel"><h2>Recomendaciones de mejora</h2><ul class="list-reco" id="reco"></ul></div>
   <div class="panel">
     <h2>Revisión de respuestas</h2>
-    <div style="margin-bottom:10px">
-      <button class="btn ghost" id="btnToggle">Mostrar/ocultar detalle</button>
-    </div>
+    <div style="margin-bottom:10px"><button class="btn ghost" id="btnToggle">Mostrar/ocultar detalle</button></div>
     <div id="review" style="display:none"></div>
   </div>
 
@@ -67,7 +57,6 @@
   const r = JSON.parse(localStorage.getItem("sp_ultimo_resultado")||"null");
   if(!r){ window.location.href="index.html"; return; }
   const el=id=>document.getElementById(id);
-
   function nivel(p){ if(p>=80) return ["Avanzado","green"]; if(p>=60) return ["Satisfactorio","verde"]; if(p>=40) return ["Mínimo","amber"]; return ["Inicial","grey"]; }
 
   el("hName").textContent = r.estudiante.nombre;
@@ -76,7 +65,7 @@
   el("ring").style.setProperty("--pct", r.global + "%");
   el("kCorr").textContent = r.correctas;
   el("kTot").textContent = r.totalPreguntas;
-  const nv=nivel(r.global); el("kNivel").textContent = nv[0];
+  el("kNivel").textContent = nivel(r.global)[0];
   el("kTime").textContent = APP.fmtTime(r.duracionSeg);
 
   if(r.porTiempo){ el("alertTiempo").innerHTML='<div class="pill-note" style="border-left:5px solid var(--sol);margin-bottom:10px">⏰ El tiempo se agotó: la prueba fue entregada automáticamente.</div>'; }
@@ -106,7 +95,7 @@
     li.innerHTML="<b>"+APP.escape(x.m)+" ("+pc+"%):</b> "+APP.escape(consejos[x.m]||"Refuerza los contenidos de este módulo.");
     reco.appendChild(li);
   });
-  if(r.global>=80){ const li=document.createElement("li"); li.style.borderLeftColor="var(--green)"; li.innerHTML="🎉 <b>¡Excelente desempeño!</b> Mantén la práctica con simulacros periódicos para consolidar tu nivel."; reco.prepend(li); }
+  if(r.global>=80){ const li=document.createElement("li"); li.style.borderLeftColor="var(--green)"; li.innerHTML="🎉 <b>¡Excelente desempeño!</b> Mantén la práctica con simulacros periódicos."; reco.prepend(li); }
 
   const rev=el("review"); const letras=["A","B","C","D"];
   r.detalle.forEach((d,i)=>{
@@ -125,8 +114,7 @@
       +'<b>'+(i+1)+'. '+APP.escape(d.modulo)+'</b>'
       +'<span class="badge '+(d.ok?"green":"amber")+'">'+(d.ok?"Correcta":"Incorrecta")+'</span></div>'
       +(d.estimulo?'<div class="stimulus">'+APP.escape(d.estimulo)+'</div>':"")
-      +'<div style="margin:8px 0">'+APP.escape(d.enunciado)+'</div>'
-      +ops
+      +'<div style="margin:8px 0">'+APP.escape(d.enunciado)+'</div>'+ops
       +'<div style="margin-top:6px;color:#5B6B78;font-size:13px">'+tu+' · '+APP.escape(d.competencia)+' · '+APP.escape(d.dificultad)+'</div>'
       +'<div style="margin-top:6px;background:#F2F8Fb;border-left:4px solid #09618F;border-radius:8px;padding:8px 12px;font-size:14px"><b>Explicación:</b> '+APP.escape(d.explicacion)+'</div>';
     rev.appendChild(item);

@@ -21,7 +21,6 @@
 
 <div class="container">
   <div class="exam-wrap">
-    <!-- Navegador -->
     <aside class="nav-panel">
       <h3>Navegador de preguntas</h3>
       <div class="legend">
@@ -35,7 +34,6 @@
       <button class="btn verde block" id="btnEntregar">Entregar y ver resultados</button>
     </aside>
 
-    <!-- Pregunta -->
     <section class="q-panel">
       <div class="q-meta">
         <div>
@@ -92,8 +90,7 @@
   }
 
   function estadoBtn(i){
-    const b=qgrid.children[i];
-    b.className="qbtn";
+    const b=qgrid.children[i]; b.className="qbtn";
     const id=preguntas[i].id;
     if(i===sesion.actual){ b.classList.add("cur"); }
     else if(sesion.marcadas[id]){ b.classList.add("mark"); }
@@ -170,8 +167,6 @@
       totalPreguntas:N, correctas, global,
       porModulo, detalle, duracionSeg:dur, porTiempo:!!porTiempo
     };
-    // Guarda en Google Sheets (si está configurado) + respaldo local.
-    // No bloquea: aunque la nube falle, el resultado local queda listo.
     try{ API.guardarResultado(resultado); }catch(e){ APP.addResultado(resultado); localStorage.setItem("sp_ultimo_resultado", JSON.stringify(resultado)); }
     APP.clearSesion();
     window.location.href="resultados.html";

@@ -1,8 +1,6 @@
 /* =====================================================================
    BANCO DE PREGUNTAS INSTITUCIONAL — Saber Pro / Saber TyT
    Institución Universitaria del Putumayo (UNIPUTUMAYO)
-   Cada ítem: id, modulo, competencia, dificultad, tiempo (s),
-   enunciado, estimulo (opcional), opciones[4], correcta, explicacion
    ===================================================================== */
 window.BANCO_PREGUNTAS = [
   /* ---------------- RAZONAMIENTO CUANTITATIVO (15) ---------------- */
@@ -323,12 +321,43 @@ window.BANCO_PREGUNTAS = [
     explicacion:"In this context 'clear' means easy to understand, not the literal 'transparent'." }
 ];
 
-/* Catálogos para el formulario (Fase 5) */
+/* =====================================================================
+   CATÁLOGOS DEL FORMULARIO — Programas oficiales UNIPUTUMAYO
+   Organizados por grupos (optgroup). Fuente: oferta académica ITP/Uniputumayo.
+   ===================================================================== */
 window.CATALOGOS = {
+  // Programas agrupados: cada grupo se muestra como <optgroup>
   programas: [
-    "Ingeniería de Sistemas","Ingeniería Ambiental","Ingeniería Forestal",
-    "Administración de Empresas","Contaduría Pública","Tecnología en Desarrollo de Software",
-    "Tecnología en Recursos Forestales","Licenciatura en Educación","Trabajo Social","Otro"
+    { grupo: "Programas profesionales — Ingenierías", items: [
+      "Ingeniería Ambiental",
+      "Ingeniería Civil",
+      "Ingeniería de Sistemas",
+      "Ingeniería Forestal",
+      "Ingeniería Agroindustrial"
+    ]},
+    { grupo: "Programas profesionales — Administración y afines", items: [
+      "Administración de Empresas",
+      "Contaduría Pública",
+      "Negocios Internacionales"
+    ]},
+    { grupo: "Programas tecnológicos", items: [
+      "Tecnología en Desarrollo de Software",
+      "Tecnología en Obras Civiles",
+      "Tecnología en Recursos Forestales",
+      "Tecnología en Saneamiento Ambiental",
+      "Tecnología en Producción Agroindustrial",
+      "Tecnología en Gestión Contable",
+      "Tecnología en Gestión de Comercio Exterior",
+      "Tecnología en Gestión Empresarial y de la Innovación",
+      "Tecnología en Gestión Pública",
+      "Tecnología en Gestión Gastronómica"
+    ]},
+    { grupo: "Programas técnicos", items: [
+      "Técnica Profesional en Producción Acuícola"
+    ]},
+    { grupo: "Otro", items: [
+      "Otro"
+    ]}
   ],
   sedes: ["Mocoa","Sibundoy","Valle del Guamuez","Puerto Asís","Otras"],
   edades: ["16-18","19-21","22-24","25-27","28-30","31 o más"],

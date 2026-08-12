@@ -81,7 +81,7 @@
       </div>
     </div>
 
-    <div class="pill-note mt16">🔒 Tratamiento de datos: al iniciar, aceptas el uso académico de tus datos conforme a la Ley 1581 de 2012 (Habeas Data). La información se almacena localmente en este navegador para fines del simulacro.</div>
+    <div class="pill-note mt16">🔒 Tratamiento de datos: al iniciar, aceptas el uso académico de tus datos conforme a la Ley 1581 de 2012 (Habeas Data).</div>
 
     <div class="btn-row mt16">
       <button type="submit" class="btn lg block">▶ Iniciar simulacro (60 min · 50 preguntas)</button>
@@ -98,8 +98,23 @@
 <script>
 (function(){
   const C = window.CATALOGOS;
+  // Rellena un select con lista simple
   const fill=(id,arr)=>{ const s=document.getElementById(id); arr.forEach(v=>{ const o=document.createElement("option"); o.value=v; o.textContent=v; s.appendChild(o); }); };
-  fill("programa",C.programas); fill("sede",C.sedes); fill("edad",C.edades);
+  // Rellena el select de programas soportando grupos (optgroup) o lista simple
+  const fillProgramas=(id,data)=>{
+    const s=document.getElementById(id);
+    if(Array.isArray(data) && data.length && typeof data[0]==="object" && data[0].grupo){
+      data.forEach(g=>{
+        const og=document.createElement("optgroup"); og.label=g.grupo;
+        g.items.forEach(v=>{ const o=document.createElement("option"); o.value=v; o.textContent=v; og.appendChild(o); });
+        s.appendChild(og);
+      });
+    } else {
+      fill(id, data);
+    }
+  };
+  fillProgramas("programa",C.programas);
+  fill("sede",C.sedes); fill("edad",C.edades);
   fill("genero",C.generos); fill("jornada",C.jornadas); fill("semestre",C.semestres); fill("modalidad",C.modalidades);
 
   const form=document.getElementById("form");
