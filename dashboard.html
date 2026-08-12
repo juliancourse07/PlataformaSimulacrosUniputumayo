@@ -24,8 +24,9 @@
       <p style="color:#5B6B78;margin:0">Consolida los simulacros realizados en este navegador.</p>
     </div>
     <div class="btn-row">
+      <button class="btn verde" id="btnRefrescar">🔄 Actualizar</button>
       <button class="btn ghost" id="btnExport">⬇️ Exportar CSV</button>
-      <button class="btn grey" id="btnClear">🗑️ Limpiar datos</button>
+      <button class="btn grey" id="btnClear">🗑️ Limpiar local</button>
     </div>
   </div>
 
@@ -35,15 +36,27 @@
 </div>
 
 <script src="assets/js/app.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/api.js"></script>
 <script>
-(function(){
+(async function(){
   const el=id=>document.getElementById(id);
-  const data = APP.getResultados();
   const content = el("content");
+
+  // Indicador de estado + carga de datos (nube o local)
+  content.innerHTML = '<div class="panel"><div class="empty">⏳ Cargando resultados'
+    + (API.enabled() ? ' desde Google Sheets…' : ' (modo local)…') + '</div></div>';
+
+  let data = [];
+  try{ data = await API.listarResultados(); }catch(e){ data = APP.getResultados(); }
+
+  const fuente = API.enabled()
+    ? '<div class="pill-note" style="margin-top:16px;border-left:5px solid var(--verde)">☁️ <b>Datos en la nube (Google Sheets):</b> este tablero muestra los resultados de <b>todos</b> los estudiantes, desde cualquier equipo.</div>'
+    : '<div class="pill-note" style="margin-top:16px;border-left:5px solid var(--sol)">💾 <b>Modo local:</b> se muestran solo los simulacros hechos en este navegador. Para consolidar a todos, configura Google Sheets (ver guía).</div>';
 
   if(!data.length){
     content.innerHTML='<div class="panel"><div class="empty">Aún no hay simulacros registrados.<br>Realiza al menos un simulacro para poblar el tablero.</div>'
-      +'<div class="center"><a class="btn" href="index.html">▶ Iniciar un simulacro</a></div></div>';
+      +'<div class="center"><a class="btn" href="index.html">▶ Iniciar un simulacro</a></div></div>' + fuente;
     setupButtons(data); return;
   }
 
@@ -141,12 +154,14 @@
     + `<div class="two-col">
          <div class="panel"><h2>Fortalezas</h2><ul class="clean">${Object.entries(modPc).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([m,v])=>`<li><b>${APP.escape(m)}</b>: ${v}% de acierto.</li>`).join("")}</ul></div>
          <div class="panel"><h2>Brechas a priorizar</h2><ul class="clean">${Object.entries(modPc).sort((a,b)=>a[1]-b[1]).slice(0,2).map(([m,v])=>`<li><b>${APP.escape(m)}</b>: ${v}% de acierto — reforzar con cursos y simulacros.</li>`).join("")}</ul></div>
-       </div>`;
+       </div>`
+    + fuente;
 
   setupButtons(data);
 
   function setupButtons(data){
-    el("btnClear").addEventListener("click",()=>{ if(confirm("¿Borrar todos los resultados almacenados en este navegador?")){ APP.clearResultados(); location.reload(); } });
+    const rb=el("btnRefrescar"); if(rb) rb.addEventListener("click",()=>location.reload());
+    el("btnClear").addEventListener("click",()=>{ if(confirm("¿Borrar el respaldo LOCAL de este navegador?\n\n(No afecta los datos guardados en Google Sheets.)")){ APP.clearResultados(); location.reload(); } });
     el("btnExport").addEventListener("click",()=>{
       if(!data.length){ alert("No hay datos para exportar."); return; }
       const cab=["id","fecha","nombre","documento","programa","sede","edad","genero","jornada","semestre","modalidad","global","correctas","totalPreguntas","duracionSeg"];

@@ -66,6 +66,8 @@
 
 <script src="assets/js/preguntas.js"></script>
 <script src="assets/js/app.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/api.js"></script>
 <script>
 (function(){
   const sesion = APP.getSesion();
@@ -168,8 +170,9 @@
       totalPreguntas:N, correctas, global,
       porModulo, detalle, duracionSeg:dur, porTiempo:!!porTiempo
     };
-    APP.addResultado(resultado);
-    localStorage.setItem("sp_ultimo_resultado", JSON.stringify(resultado));
+    // Guarda en Google Sheets (si está configurado) + respaldo local.
+    // No bloquea: aunque la nube falle, el resultado local queda listo.
+    try{ API.guardarResultado(resultado); }catch(e){ APP.addResultado(resultado); localStorage.setItem("sp_ultimo_resultado", JSON.stringify(resultado)); }
     APP.clearSesion();
     window.location.href="resultados.html";
   }
