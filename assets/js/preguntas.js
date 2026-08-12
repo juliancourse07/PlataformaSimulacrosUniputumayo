@@ -1,10 +1,11 @@
 /* =====================================================================
    BANCO DE PREGUNTAS INSTITUCIONAL — Saber Pro / Saber TyT
-   Uniputumayo · Cada ítem: id, modulo, competencia, dificultad,
-   tiempo (s), enunciado, estimulo (opcional), opciones[4], correcta, explicacion
+   Institución Universitaria del Putumayo (UNIPUTUMAYO)
+   Cada ítem: id, modulo, competencia, dificultad, tiempo (s),
+   enunciado, estimulo (opcional), opciones[4], correcta, explicacion
    ===================================================================== */
 window.BANCO_PREGUNTAS = [
-  /* ---------------- RAZONAMIENTO CUANTITATIVO ---------------- */
+  /* ---------------- RAZONAMIENTO CUANTITATIVO (15) ---------------- */
   { id:"RC01", modulo:"Razonamiento Cuantitativo", competencia:"Interpretación y representación", dificultad:"Básica", tiempo:90,
     enunciado:"Un estudiante paga una matrícula de $1.200.000 con un descuento del 15% por pronto pago. ¿Cuánto paga finalmente?",
     opciones:["$1.020.000","$1.080.000","$1.140.000","$1.380.000"], correcta:0,
@@ -60,8 +61,23 @@ window.BANCO_PREGUNTAS = [
     enunciado:"¿Cuál es el siguiente término de la secuencia?",
     opciones:["42","40","36","48"], correcta:0,
     explicacion:"Diferencias 4,6,8,10 → siguiente 12 → 30+12 = 42. También n(n+1): 6×7 = 42." },
+  { id:"RC13", modulo:"Razonamiento Cuantitativo", competencia:"Formulación y ejecución", dificultad:"Media", tiempo:90,
+    estimulo:"Una receta para 4 personas requiere 300 g de arroz.",
+    enunciado:"¿Cuánto arroz se necesita para 10 personas manteniendo la proporción?",
+    opciones:["750 g","600 g","900 g","500 g"], correcta:0,
+    explicacion:"Regla de tres: 300/4 = 75 g por persona; 75×10 = 750 g." },
+  { id:"RC14", modulo:"Razonamiento Cuantitativo", competencia:"Interpretación y representación", dificultad:"Media", tiempo:90,
+    estimulo:"En un examen de 25 preguntas, un estudiante acertó 20.",
+    enunciado:"¿Qué porcentaje de aciertos obtuvo?",
+    opciones:["80%","75%","85%","70%"], correcta:0,
+    explicacion:"20/25 = 0,8 = 80%. Se divide aciertos entre el total y se multiplica por 100." },
+  { id:"RC15", modulo:"Razonamiento Cuantitativo", competencia:"Formulación y ejecución", dificultad:"Alta", tiempo:120,
+    estimulo:"Un vehículo recorre 240 km y consume 20 litros de gasolina.",
+    enunciado:"¿Cuántos kilómetros recorre por litro?",
+    opciones:["12 km/L","10 km/L","14 km/L","8 km/L"], correcta:0,
+    explicacion:"Rendimiento = 240 km ÷ 20 L = 12 km/L. Se divide distancia entre combustible." },
 
-  /* ---------------- LECTURA CRÍTICA ---------------- */
+  /* ---------------- LECTURA CRÍTICA (14) ---------------- */
   { id:"LC01", modulo:"Lectura Crítica", competencia:"Identificar contenidos locales", dificultad:"Básica", tiempo:90,
     estimulo:"La minga es una práctica ancestral de trabajo colectivo en la que la comunidad se reúne para realizar una labor que beneficia a todos. Más que una jornada de trabajo, es un espacio de encuentro donde se refuerzan los lazos sociales y se transmiten saberes entre generaciones.",
     enunciado:"¿Cuál es la idea principal del texto?",
@@ -105,15 +121,35 @@ window.BANCO_PREGUNTAS = [
   { id:"LC09", modulo:"Lectura Crítica", competencia:"Comprender textos discontinuos", dificultad:"Básica", tiempo:80,
     estimulo:"Infografía: 'El 70% del agua dulce se usa en agricultura, 20% en industria y 10% en uso doméstico.'",
     enunciado:"Según la infografía, ¿cuál conclusión es válida?",
-    opciones:["El uso doméstico es el mayor consumidor.","La agricultura concentra la mayor parte del consumo.","La industria consume más que la agricultura.","Doméstico e industrial suman más que la agricultura."], correcta:1,
+    opciones:["El uso doméstico es el mayor consumidor de agua.","La agricultura concentra la mayor parte del consumo.","La industria consume más que la agricultura.","Doméstico e industrial suman más que la agricultura."], correcta:1,
     explicacion:"La agricultura (70%) es la mayor categoría; doméstico+industria = 30% < 70%." },
   { id:"LC10", modulo:"Lectura Crítica", competencia:"Reflexionar y evaluar", dificultad:"Alta", tiempo:110,
     estimulo:"'Los datos muestran un aumento del 30% en lectores digitales, pero la lectura por placer sigue disminuyendo.'",
     enunciado:"¿Qué evidencia debilitaría la idea de que la gente 'lee más que antes'?",
     opciones:["El aumento de lectores digitales.","La disminución de la lectura por placer.","La existencia de bibliotecas digitales.","El crecimiento de la industria editorial."], correcta:1,
     explicacion:"La caída de la lectura por placer contrasta con la afirmación y la debilita." },
+  { id:"LC11", modulo:"Lectura Crítica", competencia:"Identificar contenidos locales", dificultad:"Básica", tiempo:80,
+    estimulo:"'El páramo es un ecosistema estratégico: actúa como una esponja que regula el agua que consumen millones de personas.'",
+    enunciado:"La expresión 'actúa como una esponja' significa que el páramo:",
+    opciones:["Absorbe y libera agua de forma regulada.","Se seca con facilidad.","Contamina las fuentes hídricas.","No tiene relación con el agua."], correcta:0,
+    explicacion:"La metáfora indica que retiene y libera agua, regulando el recurso hídrico." },
+  { id:"LC12", modulo:"Lectura Crítica", competencia:"Reflexionar y evaluar", dificultad:"Media", tiempo:95,
+    estimulo:"'Prohibir por completo los videojuegos evitaría la adicción en los jóvenes.'",
+    enunciado:"¿Cuál es una objeción razonable a esta afirmación?",
+    opciones:["Los videojuegos no existen.","La prohibición total ignora usos educativos y el autocontrol posible.","Todos los jóvenes son adictos.","La adicción no tiene relación con el tiempo de uso."], correcta:1,
+    explicacion:"Una objeción válida señala que la afirmación es un falso dilema: hay alternativas al 'todo o nada'." },
+  { id:"LC13", modulo:"Lectura Crítica", competencia:"Comprender la estructura formal", dificultad:"Media", tiempo:90,
+    estimulo:"'En primer lugar, el proyecto reduce costos. En segundo lugar, mejora la calidad. Por lo tanto, debería aprobarse.'",
+    enunciado:"La expresión 'Por lo tanto' introduce:",
+    opciones:["Una nueva premisa.","La conclusión del razonamiento.","Un ejemplo.","Una objeción."], correcta:1,
+    explicacion:"'Por lo tanto' es un conector consecutivo que introduce la conclusión a partir de las premisas." },
+  { id:"LC14", modulo:"Lectura Crítica", competencia:"Comprender textos discontinuos", dificultad:"Media", tiempo:85,
+    estimulo:"Tabla de horarios: Ruta A sale 6:00, 8:00, 10:00. Ruta B sale 7:00, 9:00, 11:00.",
+    enunciado:"Si una persona llega a las 8:30, ¿cuál es el próximo bus disponible?",
+    opciones:["Ruta A a las 10:00.","Ruta B a las 9:00.","Ruta A a las 8:00.","Ruta B a las 7:00."], correcta:1,
+    explicacion:"A las 8:30 ya pasaron los de 8:00 y 7:00; el siguiente en salir es Ruta B a las 9:00." },
 
-  /* ---------------- COMPETENCIAS CIUDADANAS ---------------- */
+  /* ---------------- COMPETENCIAS CIUDADANAS (12) ---------------- */
   { id:"CC01", modulo:"Competencias Ciudadanas", competencia:"Conocimientos", dificultad:"Básica", tiempo:75,
     enunciado:"En una democracia constitucional, la principal función de la separación de poderes es:",
     opciones:["Concentrar el poder en el ejecutivo.","Establecer controles mutuos que eviten el abuso de poder.","Eliminar el poder judicial.","Permitir que un solo órgano legisle y juzgue."], correcta:1,
@@ -151,8 +187,26 @@ window.BANCO_PREGUNTAS = [
     enunciado:"El mecanismo idóneo para proteger un derecho colectivo como el ambiente sano es:",
     opciones:["La acción de tutela individual.","La acción popular.","El recurso de reposición.","La objeción de conciencia."], correcta:1,
     explicacion:"La acción popular (Art. 88 C.P.) protege derechos colectivos como el ambiente sano." },
+  { id:"CC09", modulo:"Competencias Ciudadanas", competencia:"Conocimientos", dificultad:"Básica", tiempo:75,
+    enunciado:"El derecho al voto en Colombia es una expresión del principio de:",
+    opciones:["Soberanía popular.","Reserva bancaria.","Libre empresa.","Cosa juzgada."], correcta:0,
+    explicacion:"El voto expresa la soberanía popular: el poder reside en el pueblo, que elige a sus representantes." },
+  { id:"CC10", modulo:"Competencias Ciudadanas", competencia:"Multiperspectivismo", dificultad:"Media", tiempo:90,
+    estimulo:"Un proyecto beneficia a un grupo pero afecta el entorno de otro grupo de la comunidad.",
+    enunciado:"Una decisión justa debería:",
+    opciones:["Ignorar a los afectados.","Considerar los intereses de todas las partes y buscar equilibrio.","Beneficiar solo a la mayoría sin escuchar a la minoría.","Imponerse sin diálogo."], correcta:1,
+    explicacion:"El multiperspectivismo exige ponderar los intereses de todos los afectados." },
+  { id:"CC11", modulo:"Competencias Ciudadanas", competencia:"Conocimientos", dificultad:"Media", tiempo:85,
+    enunciado:"El derecho de petición permite a un ciudadano:",
+    opciones:["Presentar solicitudes respetuosas ante autoridades y obtener respuesta.","Evadir impuestos legalmente.","Elegir a los jueces.","Modificar la Constitución directamente."], correcta:0,
+    explicacion:"El derecho de petición (Art. 23 C.P.) garantiza presentar solicitudes y recibir respuesta oportuna." },
+  { id:"CC12", modulo:"Competencias Ciudadanas", competencia:"Valoración de argumentos", dificultad:"Alta", tiempo:100,
+    estimulo:"'Como esta ley la propone alguien que no me cae bien, seguramente es una mala ley.'",
+    enunciado:"Este razonamiento incurre en la falacia de:",
+    opciones:["Ataque a la persona (ad hominem).","Generalización estadística.","Autoridad legítima.","Evidencia empírica."], correcta:0,
+    explicacion:"Descalificar una idea por quién la propone, y no por su contenido, es una falacia ad hominem." },
 
-  /* ---------------- COMUNICACIÓN ESCRITA ---------------- */
+  /* ---------------- COMUNICACIÓN ESCRITA (12) ---------------- */
   { id:"CE01", modulo:"Comunicación Escrita", competencia:"Planear", dificultad:"Básica", tiempo:80,
     estimulo:"Debes escribir un texto para convencer al consejo estudiantil de crear una zona de estudio.",
     enunciado:"¿Cuál oración funciona mejor como tesis del texto?",
@@ -191,8 +245,28 @@ window.BANCO_PREGUNTAS = [
     enunciado:"El primer paso recomendado antes de redactar un texto argumentativo es:",
     opciones:["Escribir la conclusión y no revisarla.","Planear: delimitar el tema, la tesis y los argumentos principales.","Copiar un texto de internet.","Redactar sin ninguna organización previa."], correcta:1,
     explicacion:"La planeación orienta la escritura y mejora la coherencia." },
+  { id:"CE09", modulo:"Comunicación Escrita", competencia:"Uso del lenguaje", dificultad:"Media", tiempo:85,
+    estimulo:"Oración: 'Los estudiante entregaron su trabajo a tiempo.'",
+    enunciado:"¿Cuál es la corrección adecuada?",
+    opciones:["'Los estudiantes entregaron su trabajo a tiempo.'","'Los estudiante entregó su trabajo a tiempo.'","'El estudiantes entregaron su trabajo.'","Está correcta como está."], correcta:0,
+    explicacion:"Debe existir concordancia de número: 'los estudiantes' (plural)." },
+  { id:"CE10", modulo:"Comunicación Escrita", competencia:"Organización del texto", dificultad:"Media", tiempo:85,
+    estimulo:"Un texto argumentativo bien estructurado suele ordenarse así:",
+    enunciado:"¿Cuál es la secuencia más adecuada?",
+    opciones:["Conclusión, introducción, argumentos.","Introducción (tesis), desarrollo (argumentos), conclusión.","Argumentos, título, tesis.","Desarrollo, introducción, título."], correcta:1,
+    explicacion:"La estructura estándar presenta primero la tesis, luego los argumentos y finaliza con la conclusión." },
+  { id:"CE11", modulo:"Comunicación Escrita", competencia:"Adecuación al contexto", dificultad:"Media", tiempo:85,
+    estimulo:"Vas a escribir un afiche para invitar a un evento estudiantil.",
+    enunciado:"¿Qué característica es más apropiada para ese tipo de texto?",
+    opciones:["Párrafos largos y técnicos.","Mensaje breve, claro y con datos esenciales (fecha, lugar, hora).","Lenguaje jurídico formal.","Texto sin ningún dato concreto."], correcta:1,
+    explicacion:"Un afiche requiere brevedad, claridad y la información esencial visible de un vistazo." },
+  { id:"CE12", modulo:"Comunicación Escrita", competencia:"Selección de ideas", dificultad:"Alta", tiempo:95,
+    estimulo:"Tesis: 'La universidad debe ampliar el horario de la biblioteca.'",
+    enunciado:"¿Cuál oración apoya mejor esa tesis con un argumento?",
+    opciones:["A mí me gusta la biblioteca.","Muchos estudiantes trabajan de día y solo pueden estudiar en la noche, cuando la biblioteca ya cerró.","La biblioteca tiene libros.","El horario actual es de 8 a 5."], correcta:1,
+    explicacion:"El mejor apoyo es una razón basada en una necesidad concreta de los estudiantes." },
 
-  /* ---------------- INGLÉS ---------------- */
+  /* ---------------- INGLÉS (12) ---------------- */
   { id:"EN01", modulo:"Inglés", competencia:"Grammar / Present simple", dificultad:"Básica", tiempo:45,
     enunciado:"Choose the correct option: 'She usually ______ to work by bus.'",
     opciones:["go","goes","going","gone"], correcta:1,
@@ -237,7 +311,16 @@ window.BANCO_PREGUNTAS = [
     estimulo:"'The new policy aims to reduce paper use by 40% within two years by digitizing internal processes.'",
     enunciado:"According to the text, the main goal of the policy is to:",
     opciones:["Increase paper use.","Cut paper consumption through digitization.","Hire more staff.","Close internal processes."], correcta:1,
-    explicacion:"The stated aim is to reduce paper use via digitization." }
+    explicacion:"The stated aim is to reduce paper use via digitization." },
+  { id:"EN11", modulo:"Inglés", competencia:"Grammar / Comparatives", dificultad:"Básica", tiempo:50,
+    enunciado:"Choose the correct option: 'This book is ______ than the other one.'",
+    opciones:["more interesting","interestinger","most interesting","interesting"], correcta:0,
+    explicacion:"Long adjectives form the comparative with 'more': 'more interesting than'." },
+  { id:"EN12", modulo:"Inglés", competencia:"Vocabulary in context", dificultad:"Media", tiempo:55,
+    estimulo:"'The instructions were so clear that everyone understood them immediately.'",
+    enunciado:"The word 'clear' in this sentence means:",
+    opciones:["easy to understand","transparent glass","sunny weather","empty"], correcta:0,
+    explicacion:"In this context 'clear' means easy to understand, not the literal 'transparent'." }
 ];
 
 /* Catálogos para el formulario (Fase 5) */

@@ -3,14 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulacro en curso · Uniputumayo</title>
+<title>Simulacro en curso · UNIPUTUMAYO</title>
+<link rel="icon" type="image/png" href="assets/img/favicon.png">
 <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
 <div class="exam-top">
-  <div class="brand" style="display:flex;align-items:center;gap:12px;color:#fff;font-weight:700">
-    <span class="logo" style="width:34px;height:34px;border-radius:8px;background:#fff;color:#0B2A5B;display:grid;place-items:center;font-weight:800">iTP</span>
-    <span>Simulacro Saber Pro / TyT</span>
+  <div class="brand">
+    <span class="logo"><img src="assets/img/logo.png" alt="Logo UNIPUTUMAYO"></span>
+    <span>UNIPUTUMAYO · Simulacro Saber Pro / TyT</span>
   </div>
   <div class="timer" id="timer"><span class="lbl">Tiempo restante</span><span id="clock">60:00</span></div>
   <div class="student" style="color:#fff;text-align:right;font-size:14px">
@@ -31,7 +32,7 @@
       </div>
       <div class="qgrid" id="qgrid"></div>
       <hr class="hr">
-      <button class="btn teal block" id="btnEntregar">Entregar y ver resultados</button>
+      <button class="btn verde block" id="btnEntregar">Entregar y ver resultados</button>
     </aside>
 
     <!-- Pregunta -->
@@ -39,7 +40,7 @@
       <div class="q-meta">
         <div>
           <div class="q-module" id="qModule">Módulo</div>
-          <div style="color:#6B7280;font-size:13px" id="qCount">Pregunta 1 de 25</div>
+          <div style="color:#5B6B78;font-size:13px" id="qCount">Pregunta 1 de 50</div>
         </div>
         <button class="btn ghost" id="btnMarcar">🚩 Marcar para revisión</button>
       </div>
@@ -56,7 +57,7 @@
 
       <div class="progress-row">
         <span>Progreso del examen</span>
-        <span id="progText">0 de 25 respondidas</span>
+        <span id="progText">0 de 50 respondidas</span>
       </div>
       <div class="progress"><i id="progBar"></i></div>
     </section>
@@ -70,12 +71,10 @@
   const sesion = APP.getSesion();
   if(!sesion || sesion.entregado){ window.location.href="index.html"; return; }
 
-  // Reconstruir lista de preguntas en el orden de la sesión
   const byId = Object.fromEntries(window.BANCO_PREGUNTAS.map(q=>[q.id,q]));
   const preguntas = sesion.preguntasIds.map(id=>byId[id]).filter(Boolean);
   const N = preguntas.length;
 
-  // Cabecera estudiante
   document.getElementById("stName").textContent = sesion.estudiante.nombre;
   document.getElementById("stMeta").textContent = sesion.estudiante.programa + " · " + sesion.estudiante.sede;
 
@@ -83,7 +82,6 @@
   const clock=el("clock"), timer=el("timer");
   const qgrid=el("qgrid");
 
-  // Construir grid
   for(let i=0;i<N;i++){
     const b=document.createElement("button");
     b.className="qbtn"; b.textContent=i+1; b.dataset.i=i;
@@ -108,7 +106,6 @@
     el("qCount").textContent = "Pregunta "+(i+1)+" de "+N;
     el("qStimulusBox").innerHTML = q.estimulo ? '<div class="stimulus">'+APP.escape(q.estimulo)+'</div>' : "";
     el("qStem").textContent = q.enunciado;
-    // opciones
     const cont=el("qOptions"); cont.innerHTML="";
     const letras=["A","B","C","D"];
     q.opciones.forEach((op,idx)=>{
@@ -119,13 +116,10 @@
       d.addEventListener("click",()=>{ sesion.respuestas[id]=idx; APP.setSesion(sesion); render(); });
       cont.appendChild(d);
     });
-    // botón marcar
     el("btnMarcar").innerHTML = sesion.marcadas[id] ? "🚩 Quitar marca" : "🚩 Marcar para revisión";
-    el("btnMarcar").classList.toggle("teal", !!sesion.marcadas[id]);
-    // nav
+    el("btnMarcar").classList.toggle("sol", !!sesion.marcadas[id]);
     el("btnPrev").disabled = (i===0);
     el("btnNext").textContent = (i===N-1) ? "Ir a entrega ✓" : "Siguiente →";
-    // progreso
     const resp=Object.keys(sesion.respuestas).length;
     el("progText").textContent = resp+" de "+N+" respondidas";
     el("progBar").style.width = Math.round(resp/N*100)+"%";
@@ -138,7 +132,6 @@
   el("btnNext").addEventListener("click",()=>{ if(sesion.actual<N-1){ sesion.actual++; render(); } else { entregar(false); } });
   el("btnEntregar").addEventListener("click",()=>{ const r=Object.keys(sesion.respuestas).length; if(confirm("¿Entregar el simulacro?\n\nRespondidas: "+r+" de "+N+".\nEsta acción finaliza la prueba.")) entregar(false); });
 
-  // ---- Cronómetro ----
   let timerInt=null;
   function tick(){
     const restante=Math.round((sesion.finTs-Date.now())/1000);
@@ -149,13 +142,11 @@
   }
   timerInt=setInterval(tick,1000); tick();
 
-  // ---- Calificación y entrega ----
   function entregar(porTiempo){
     if(sesion.entregado) return;
     clearInterval(timerInt);
     sesion.entregado=true; sesion.finReal=Date.now(); sesion.porTiempo=!!porTiempo;
 
-    // Calcular resultados
     const letras=["A","B","C","D"];
     let correctas=0; const porModulo={}; const detalle=[];
     preguntas.forEach(q=>{
@@ -168,7 +159,7 @@
         enunciado:q.enunciado, estimulo:q.estimulo||"", opciones:q.opciones,
         marcada:(marc==null?null:letras[marc]), correcta:letras[q.correcta], ok, explicacion:q.explicacion });
     });
-    const global = Math.round(correctas/N*1000)/10; // % con 1 decimal
+    const global = Math.round(correctas/N*1000)/10;
     const dur = Math.round((sesion.finReal-sesion.inicio)/1000);
 
     const resultado = {
@@ -183,7 +174,6 @@
     window.location.href="resultados.html";
   }
 
-  // Evitar perder el examen por recarga accidental
   window.addEventListener("beforeunload",function(e){ if(!sesion.entregado){ e.preventDefault(); e.returnValue=""; } });
 
   render();

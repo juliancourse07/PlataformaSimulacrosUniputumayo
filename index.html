@@ -3,20 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulacro Saber Pro / Saber TyT · Uniputumayo</title>
+<title>Simulacro Saber Pro / Saber TyT · UNIPUTUMAYO</title>
+<link rel="icon" type="image/png" href="assets/img/favicon.png">
 <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
 <div class="topbar">
-  <div class="brand"><span class="logo">iTP</span><span>Uniputumayo · Simulacros Saber Pro / TyT</span></div>
+  <div class="brand">
+    <span class="logo"><img src="assets/img/logo.png" alt="Logo UNIPUTUMAYO"></span>
+    <span class="txt">UNIPUTUMAYO<small>Simulacros Saber Pro / Saber TyT</small></span>
+  </div>
   <div class="nav"><a href="index.html">Inicio</a><a href="dashboard.html">Dashboard institucional</a></div>
 </div>
 
 <div class="container-narrow">
   <div class="hero mt16">
-    <div class="kicker">Preparación institucional</div>
-    <h1>Registro para el simulacro</h1>
-    <p>Prueba tipo Saber Pro / Saber TyT · Duración <b>60 minutos</b> · Módulos genéricos con preguntas aleatorias. Diligencia tus datos para iniciar.</p>
+    <div class="logo-hero">
+      <img src="assets/img/logo.png" alt="Logo UNIPUTUMAYO">
+      <div>
+        <div class="kicker">Institución Universitaria del Putumayo</div>
+        <h1 style="margin:.1em 0">Registro para el simulacro</h1>
+      </div>
+    </div>
+    <p>Prueba tipo Saber Pro / Saber TyT · Duración <b>60 minutos</b> · <b>50 preguntas</b> aleatorias de los módulos genéricos. Diligencia tus datos para iniciar.</p>
   </div>
 
   <form id="form" class="card mt16" novalidate>
@@ -75,11 +84,11 @@
     <div class="pill-note mt16">🔒 Tratamiento de datos: al iniciar, aceptas el uso académico de tus datos conforme a la Ley 1581 de 2012 (Habeas Data). La información se almacena localmente en este navegador para fines del simulacro.</div>
 
     <div class="btn-row mt16">
-      <button type="submit" class="btn lg block">▶ Iniciar simulacro (60 min)</button>
+      <button type="submit" class="btn lg block">▶ Iniciar simulacro (60 min · 50 preguntas)</button>
     </div>
   </form>
 
-  <div class="footer">Institución Universitaria del Putumayo · Sistema de Fortalecimiento Saber Pro / Saber TyT</div>
+  <div class="footer">Institución Universitaria del Putumayo · UNIPUTUMAYO · Sistema de Fortalecimiento Saber Pro / Saber TyT</div>
 </div>
 
 <script src="assets/js/preguntas.js"></script>
@@ -93,9 +102,7 @@
 
   const form=document.getElementById("form");
   const nombre=document.getElementById("nombre"), doc=document.getElementById("documento");
-  // Documento: solo números
   doc.addEventListener("input",()=>{ doc.value=doc.value.replace(/\D/g,"").slice(0,15); });
-  // Nombre: solo letras y espacios
   nombre.addEventListener("input",()=>{ nombre.value=nombre.value.replace(/[^\p{L}\s'.-]/gu,""); });
 
   function invalid(id,cond){ const f=document.getElementById(id); f.classList.toggle("invalid",cond); return cond; }

@@ -1,7 +1,7 @@
 /* ===== Utilidades compartidas ===== */
 window.APP = {
   DURACION_MIN: 60,          // Simulacro proyectado a 1 hora
-  NUM_PREGUNTAS: 25,         // Preguntas por simulacro (aleatorias)
+  NUM_PREGUNTAS: 50,         // Preguntas por simulacro (aleatorias)
   KEY_SESION: "sp_sesion_actual",
   KEY_RESULTADOS: "sp_resultados",
 
@@ -22,6 +22,7 @@ window.APP = {
   // ---- selección balanceada de preguntas por módulo ----
   seleccionarPreguntas(n){
     const banco = window.BANCO_PREGUNTAS || [];
+    if(n > banco.length) n = banco.length;
     const modulos = [...new Set(banco.map(q=>q.modulo))];
     const porMod = {}; modulos.forEach(m=> porMod[m]=this.shuffle(banco.filter(q=>q.modulo===m)));
     const base = Math.floor(n/modulos.length);
@@ -31,6 +32,6 @@ window.APP = {
     let resto = this.shuffle(banco.filter(q=> !sel.includes(q)));
     let i=0;
     while(sel.length<n && i<resto.length){ sel.push(resto[i++]); }
-    return this.shuffle(sel).slice(0,Math.min(n,banco.length));
+    return this.shuffle(sel).slice(0,n);
   }
 };
